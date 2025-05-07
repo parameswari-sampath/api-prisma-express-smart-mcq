@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int           @id @default(autoincrement())
+  email            String        @unique
+  password         String
+  role             UserRole
+  name             String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  createdQuestions Question[]    @relation("CreatedQuestions")
+  createdTests     Test[]        @relation("CreatedTests")
+  testAttempts     TestAttempt[] @relation("StudentAttempts")
+}
+
+enum UserRole {
+  TEACHER
+  STUDENT
+}
+
+model Question {
+  id             Int             @id @default(autoincrement())
+  text           String
+  optionA        String
+  optionB        String
+  optionC        String
+  optionD        String
+  correctAnswer  String // "A", "B", "C", or "D"
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  createdBy      User            @relation("CreatedQuestions", fields: [createdById], references: [id])
+  createdById    Int
+  testQuestions  TestQuestion[]  @relation("QuestionInTest")
+  studentAnswers StudentAnswer[] @relation("AnsweredQuestion")
+}
+
+model Test {
+  id            Int            @id @default(autoincrement())
+  title         String
+  description   String?
+  duration      Int // Test duration in minutes
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  createdBy     User           @relation("CreatedTests", fields: [createdById], references: [id])
+  createdById   Int
+  testQuestions TestQuestion[] @relation("TestQuestions")
+  testAttempts  TestAttempt[]  @relation("TestAttempts")
+}
+
+model TestQuestion {
+  id         Int      @id @default(autoincrement())
+  test       Test     @relation("TestQuestions", fields: [testId], references: [id], onDelete: Cascade)
+  testId     Int
+  question   Question @relation("QuestionInTest", fields: [questionId], references: [id], onDelete: Cascade)
+  questionId Int
+  order      Int // Position of the question in the test
+  createdAt  DateTime @default(now())
+
+  @@unique([testId, questionId])
+  @@index([testId])
+  @@index([questionId])
+}
+
+model TestAttempt {
+  id          Int             @id @default(autoincrement())
+  test        Test            @relation("TestAttempts", fields: [testId], references: [id], onDelete: Cascade)
+  testId      Int
+  student     User            @relation("StudentAttempts", fields: [studentId], references: [id], onDelete: Cascade)
+  studentId   Int
+  startedAt   DateTime        @default(now())
+  submittedAt DateTime?
+  score       Int? // Score will be calculated upon submission
+  answers     StudentAnswer[] @relation("AttemptAnswers")
+
+  @@index([testId])
+  @@index([studentId])
+}
+
+model StudentAnswer {
+  id             Int         @id @default(autoincrement())
+  testAttempt    TestAttempt @relation("AttemptAnswers", fields: [testAttemptId], references: [id], onDelete: Cascade)
+  testAttemptId  Int
+  question       Question    @relation("AnsweredQuestion", fields: [questionId], references: [id], onDelete: Cascade)
+  questionId     Int
+  selectedOption String // "A", "B", "C", or "D"
+  isCorrect      Boolean? // Will be set upon submission
+  createdAt      DateTime    @default(now())
+
+  @@unique([testAttemptId, questionId])
+  @@index([testAttemptId])
+  @@index([questionId])
+}

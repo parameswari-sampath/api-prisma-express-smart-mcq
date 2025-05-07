@@ -1,0 +1,26 @@
+/**
+ * Database configuration and connection
+ */
+const { PrismaClient } = require("@prisma/client");
+
+// Initialize Prisma client
+const prisma = new PrismaClient();
+
+/**
+ * Connect to database
+ */
+const connectDatabase = async () => {
+  try {
+    await prisma.$connect();
+    console.log("✅ Database connected successfully");
+    return prisma;
+  } catch (error) {
+    console.error("❌ Database connection error:", error);
+    process.exit(1);
+  }
+};
+
+module.exports = {
+  prisma,
+  connectDatabase,
+};

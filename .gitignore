@@ -1,0 +1,58 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Environment variables
+.env
+.env.*.local
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor folders and files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Coverage directories
+coverage/
+
+# Build output
+dist/
+build/
+
+# Optional npm cache
+.npm/
+
+# Dependency directories
+jspm_packages/
+
+# Typescript
+*.tsbuildinfo
+
+# PM2 logs
+pids/
+logs/
+*.log
+
+# Express-specific temporary stuff
+tmp/
+temp/
+
+# Optional: ignore database files
+*.sqlite
+*.db
