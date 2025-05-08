@@ -1,0 +1,50 @@
+# CURL Commands for Test API Endpoints
+
+# Variables (replace with your actual values)
+API_URL="http://localhost:3000/api"
+AUTH_TOKEN="your_jwt_token_here"
+
+# ===== 1. Create a new test =====
+curl -X POST "${API_URL}/tests" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${AUTH_TOKEN}" \
+  -d '{
+    "title": "Midterm Physics Exam",
+    "description": "Physics exam covering chapters 1-5",
+    "duration": 60,
+    "questionIds": [1, 2, 3]
+  }'
+
+# ===== 2. Get all tests created by teacher =====
+curl -X GET "${API_URL}/tests?page=1&limit=10" \
+  -H "Authorization: Bearer ${AUTH_TOKEN}"
+
+# ===== 3. Get specific test details =====
+curl -X GET "${API_URL}/tests/1" \
+  -H "Authorization: Bearer ${AUTH_TOKEN}"
+
+# ===== 4. Update test details =====
+curl -X PUT "${API_URL}/tests/1" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${AUTH_TOKEN}" \
+  -d '{
+    "title": "Updated Physics Exam",
+    "description": "Updated exam description",
+    "duration": 75
+  }'
+
+# ===== 5. Delete a test =====
+curl -X DELETE "${API_URL}/tests/1" \
+  -H "Authorization: Bearer ${AUTH_TOKEN}"
+
+# ===== 6. Add questions to a test =====
+curl -X POST "${API_URL}/tests/1/questions" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${AUTH_TOKEN}" \
+  -d '{
+    "questionIds": [4, 5, 6]
+  }'
+
+# ===== 7. Remove a question from a test =====
+curl -X DELETE "${API_URL}/tests/1/questions/4" \
+  -H "Authorization: Bearer ${AUTH_TOKEN}"

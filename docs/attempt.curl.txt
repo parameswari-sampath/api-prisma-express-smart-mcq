@@ -1,0 +1,54 @@
+# CURL Commands for Test Attempts API Endpoints
+
+# Variables (replace with your actual values)
+API_URL="http://localhost:3000/api"
+STUDENT_TOKEN="your_student_jwt_token_here"
+
+# ===== 1. Start a new test attempt =====
+curl -X POST "${API_URL}/attempts" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${STUDENT_TOKEN}" \
+  -d '{
+    "testId": 1
+  }'
+
+# ===== 2. Get all attempts for the current student =====
+curl -X GET "${API_URL}/attempts?page=1&limit=10" \
+  -H "Authorization: Bearer ${STUDENT_TOKEN}"
+
+# ===== 3. Get a specific attempt by ID =====
+curl -X GET "${API_URL}/attempts/1" \
+  -H "Authorization: Bearer ${STUDENT_TOKEN}"
+
+# ===== 4. Submit an answer for a question in a test attempt =====
+curl -X POST "${API_URL}/attempts/1/answers" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${STUDENT_TOKEN}" \
+  -d '{
+    "questionId": 1,
+    "selectedOption": "B"
+  }'
+
+# ===== 5. Submit the entire test attempt =====
+# Option 1: Submit with no additional answers
+curl -X PUT "${API_URL}/attempts/1/submit" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${STUDENT_TOKEN}" \
+  -d '{}'
+
+# Option 2: Submit with additional answers
+curl -X PUT "${API_URL}/attempts/1/submit" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${STUDENT_TOKEN}" \
+  -d '{
+    "answers": [
+      {
+        "questionId": 2,
+        "selectedOption": "A"
+      },
+      {
+        "questionId": 3,
+        "selectedOption": "C"
+      }
+    ]
+  }'

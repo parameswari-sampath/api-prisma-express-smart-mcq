@@ -1,0 +1,56 @@
+# First, login as a teacher to get an authentication token
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "teacher@example.com",
+    "password": "password123"
+  }'
+
+# Copy the token from the response and replace YOUR_TOKEN in the following commands
+
+# 1. Create a new question
+curl -X POST http://localhost:3000/api/questions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "text": "What is the capital of France?",
+    "optionA": "London",
+    "optionB": "Berlin",
+    "optionC": "Paris",
+    "optionD": "Madrid",
+    "correctAnswer": "C"
+  }'
+
+# 2. Get all questions (with pagination)
+curl -X GET "http://localhost:3000/api/questions?page=1&limit=10" \
+  -H "Authorization: Bearer YOUR_TOKEN"
+
+# 3. Get a specific question by ID (replace QUESTION_ID with actual ID)
+curl -X GET http://localhost:3000/api/questions/QUESTION_ID \
+  -H "Authorization: Bearer YOUR_TOKEN"
+
+# 4. Update a question (replace QUESTION_ID with actual ID)
+curl -X PUT http://localhost:3000/api/questions/QUESTION_ID \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "text": "What is the capital of France? (Updated)",
+    "correctAnswer": "C"
+  }'
+
+# 5. Delete a question (replace QUESTION_ID with actual ID)
+curl -X DELETE http://localhost:3000/api/questions/QUESTION_ID \
+  -H "Authorization: Bearer YOUR_TOKEN"
+
+# 6. Test authorization - Try accessing as a student (should fail)
+# First login as student to get token
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "student@example.com",
+    "password": "password123"
+  }'
+
+# Then try to access questions with student token
+curl -X GET http://localhost:3000/api/questions \
+  -H "Authorization: Bearer STUDENT_TOKEN"
